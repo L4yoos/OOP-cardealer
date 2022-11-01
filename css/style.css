@@ -1,0 +1,15 @@
+.mask-custom {
+    backdrop-filter: blur(3px);
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+#myDIV {
+    width: 100%;
+    height: 60vh;
+    background-image: url('../images/backgroundimage.jpg');
+    background-position: top left;
+    animation: mymove 50s infinite;
+  }
+  
+  @keyframes mymove {
+    50% {background-position: center;}
+  }
