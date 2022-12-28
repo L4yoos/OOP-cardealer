@@ -16,9 +16,6 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-        <button class="navbar-toggler" type="button"  data-mdb-toggle="collapse" data-mdb-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" >
-            <i class="fas fa-bars"></i>
-        </button>
         <a href="index.php"><span class="navbar-brand mb-0 h1">DalunCAR</span></a>
     <div class="d-flex align-items-center">
       <?php if(isset($_SESSION["userid"])) { ?>

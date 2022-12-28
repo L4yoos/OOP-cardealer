@@ -2,10 +2,10 @@
 
 session_start();
 include "../includes/todolist.inc.php";
-// if(($_SESSION["loggedIn"] != true) || ($_SESSION['is_admin'] != true)){
-//   header("Location: ../komis.php");
-//   exit;
-// }
+if(($_SESSION["loggedin"] != true) && ($_SESSION["is_admin"] != true)){
+    header("Location: ../index.php");
+    exit;
+}
 
 ?><!DOCTYPE html>
 <html lang="en">
@@ -21,37 +21,54 @@ include "../includes/todolist.inc.php";
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/5.0.0/mdb.min.css" rel="stylesheet"/>
 </head>
 <body>
+<header>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-        <button class="navbar-toggler" type="button"  data-mdb-toggle="collapse" data-mdb-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" >
-            <i class="fas fa-bars"></i>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <a class="navbar-brand mt-2 mt-lg-0" href="../komis.php"><h2>Dalun<span>CAR</span></h2></a>
-        </div>
+        <a href="index.php"><span class="navbar-brand mb-0 h1">DalunCAR</span></a>
     <div class="d-flex align-items-center">
+      <?php if(isset($_SESSION["userid"]) and $_SESSION["is_admin"] == 1) { ?>
         <div class="dropdown">
             <a class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#" id="navbarDropdownMenuAvatar" role="button" data-mdb-toggle="dropdown" aria-expanded="false">
-                <img src="../../images/patrick.jpg" class="rounded-circle" height="35" alt="daluni chad" loading="lazy"/>
+                <img src="../images/patrick.jpg" class="rounded-circle" height="40" alt="daluni chad" loading="lazy"/>
             </a>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
           <li>
             <a class="dropdown-item" href="list.php">Todolist</a>
           </li>
           <li>
-            <a class="dropdown-item" href="../admin.php">Panel Administracyjny</a>
+            <a class="dropdown-item" href="index.php">Panel Administracyjny</a>
           </li>
           <li>
-            <a class="dropdown-item" href="../car.php">Dodaj samochód!</a>
+            <a class="dropdown-item" href="car.php">Dodaj samochód!</a>
           </li>
           <li>
-            <a class="dropdown-item" href="../logout.php">Wyloguj sie!</a>
+            <a class="logout dropdown-item" href="../includes/logout.inc.php">Wyloguj sie!</a>
           </li>
         </ul>
+        <?php } 
+        elseif (isset($_SESSION["userid"])) {?>
+                  <div class="dropdown">
+            <a class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#" id="navbarDropdownMenuAvatar" role="button" data-mdb-toggle="dropdown" aria-expanded="false">
+                <img src="images/patrick.jpg" class="rounded-circle" height="40" alt="daluni chad" loading="lazy"/>
+            </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
+          <li>
+            <a class="logout dropdown-item" href="includes/logout.inc.php">Wyloguj sie!</a>
+          </li>
+        </ul>
+        <?php } else {?>
+          <a href="login.php"><button type="button" class="btn btn-link px-3 me-2">
+          Zaloguj sie!
+        </button></a>
+        <a href="signup.php"><button type="button" class="btn btn-primary me-3">
+          Zarejestruj sie!
+        </button></a>
+        <?php } ?>
       </div>
     </div>
   </div>
 </nav>
+</header>
     <div class="main-section">
         <div class="add-section">
         <?php echo "<h2 style='color:#000; text-align:center;'>Witaj " . $_SESSION["useruid"]. "</h2>"; ?>
@@ -92,7 +109,8 @@ include "../includes/todolist.inc.php";
             <?php } ?>
         </div>
     </div>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/5.0.0/mdb.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/5.0.0/mdb.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
 
     <script>
@@ -106,6 +124,11 @@ include "../includes/todolist.inc.php";
                 (data) => {
                     if(data){
                         $(this).parent().hide(600);
+                        Swal.fire({
+                              icon: 'success',
+                              title: 'Usunąłeś Element!',
+                              timer: 500
+                        });
                     }
                 }
                 );

@@ -2,6 +2,10 @@
 
 session_start();
 include "../includes/admin.inc.php";
+if(($_SESSION["loggedin"] != true) && ($_SESSION["is_admin"] != true)){
+    header("Location: ../index.php");
+    exit;
+}
 
 ?><!DOCTYPE html>
 <html lang="en">
@@ -19,10 +23,7 @@ include "../includes/admin.inc.php";
 <header>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-        <button class="navbar-toggler" type="button"  data-mdb-toggle="collapse" data-mdb-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" >
-            <i class="fas fa-bars"></i>
-        </button>
-        <a href="index.php"><span class="navbar-brand mb-0 h1">DalunCAR</span></a>
+        <a href="../index.php"><span class="navbar-brand mb-0 h1">DalunCAR</span></a>
     <div class="d-flex align-items-center">
       <?php if(isset($_SESSION["userid"]) and $_SESSION["is_admin"] == 1) { ?>
         <div class="dropdown">
@@ -31,7 +32,7 @@ include "../includes/admin.inc.php";
             </a>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
           <li>
-            <a class="dropdown-item" href="todolist/index.php">Todolist</a>
+            <a class="dropdown-item" href="list.php">Todolist</a>
           </li>
           <li>
             <a class="dropdown-item" href="index.php">Panel Administracyjny</a>
@@ -51,7 +52,7 @@ include "../includes/admin.inc.php";
             </a>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
           <li>
-            <a class="logout dropdown-item" href="includes/logout.inc.php">Wyloguj sie!</a>
+            <a class="logout dropdown-item" href="../includes/logout.inc.php">Wyloguj sie!</a>
           </li>
         </ul>
         <?php } else {?>
@@ -106,7 +107,7 @@ include "../includes/admin.inc.php";
                         <div class="card-body">
                             <div class="d-flex justify-content-between px-md-1">
                             <div>
-                                <h3 class="text-danger"><?php echo $count; ?></h3>
+                                <h3 class="text-danger"><?php $count->allVisit(); ?></h3>
                                 <p class="mb-0">Wszystkie Wizyty</p>
                             </div>
                             <div class="align-self-center">
@@ -121,7 +122,7 @@ include "../includes/admin.inc.php";
                         <div class="card-body">
                             <div class="d-flex justify-content-between px-md-1">
                                 <div>
-                                    <h3 class="text-success"></h3>
+                                    <h3 class="text-success"><?php echo $count->allMoney(); ?> PLN</h3>
                                     <p class="mb-0">Przychód</p>
                                 </div>
                                 <div class="align-self-center">
@@ -161,8 +162,9 @@ include "../includes/admin.inc.php";
 						<i class="fas fa-times"></i>
                         </button>
                          
-						<button type="button" id="<?php echo $user[0] ?>" class="edit btn btn-link btn-sm px-3" data-ripple-color="dark"> 
-						<i class="fa-solid fa-user-pen"></i> </button>
+						<button type="button" id="<?php echo $user[0] ?>" modal="1" class="edit btn btn-link btn-sm px-3" data-ripple-color="dark"> 
+						<i class="fa-solid fa-user-pen"></i> 
+                        </button>
         			
 						<div class="modal fade" id="editmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         				<div class="modal-dialog" role="document">
@@ -171,26 +173,27 @@ include "../includes/admin.inc.php";
 									<h5 class="modal-title" id="exampleModalLabel">Edytuj Użytkownika</h5>
 									<button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
 								</div>
-					<form action="" method="POST">
-						<div class="modal-body">
-							<div class="form-outline mb-4">
-							    <input type="text" name="username" id="form1" class="form-control" placeholder="Wpisz nazwe użytkownika">
-                                <label class="form-label" for="form1">Username</label>
-							</div>
-							<div class="form-outline mb-4">
-								<input type="text" name="email" id="form2" class="form-control" placeholder="Wpisz email">
-                                <label class="form-label" for="form2"> Email </label>
-							</div>
-							<div class="form-outline mb-4">
-								<input type="text" name="is_admin" id="form3" class="form-control" placeholder="(0 : 1)">
-                                <label class="form-label" for="form3"> Is_admin </label>
-							</div>
-                    	</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">Zamnkij</button>
-							<button type="submit" name="updatedata" class="btn btn-primary">Aktualizuj Użytkownika</button>
-						</div>
-                	</form>
+                        <form action="../includes/adminajax.inc.php" method="POST">
+                            <div class="modal-body">
+                                <input type="hidden" name="modalid" id="id">
+                                <div class="form-outline mb-4">
+                                    <input type="text" id="form1" class="form-control" name="username" placeholder="Wpisz nazwe użytkownika">
+                                    <label class="form-label" for="form1">Username</label>
+                                </div>
+                                <div class="form-outline mb-4">
+                                    <input type="text" id="form2" class="form-control" name="email" placeholder="Wpisz email">
+                                    <label class="form-label" for="form2"> Email </label>
+                                </div>
+                                <div class="form-outline mb-4">
+                                    <input type="text" id="form3" class="form-control" name="is_admin" placeholder="(0 : 1)">
+                                    <label class="form-label" for="form3"> Is_admin </label>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Zamnkij</button>
+                                <button type="submit" name="updatedata" class="button btn btn-primary">Aktualizuj Użytkownika</button>
+                            </div>
+                        </form>
             				</div>
         				</div>
     					</div>
@@ -209,6 +212,25 @@ include "../includes/admin.inc.php";
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/5.0.0/mdb.min.js"></script>
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<?php
+    global $url;
+    $url.= $_SERVER['HTTP_HOST'];
+    $url.= $_SERVER['REQUEST_URI'];    
+      
+    $url.strlen($url);
+    $tekst = substr($url, 40);
+    if (strcmp($tekst, "successedit") !== 0) {}
+    else {
+        echo "<script>
+        $(document).ready(function(){
+          Swal.fire({
+            icon: 'success',
+            title: 'Edytowales Uzytkownika!',
+          })
+        });
+      </script>";
+    }
+?>
 <script>
         $(document).ready(function(){
             $('.del').click(function(){         
@@ -216,7 +238,7 @@ include "../includes/admin.inc.php";
             var liczbaUsers = $('#apollosixone').find("h3").text(liUsers - 1);
             var tr = $(this).closest('tr');
             const id = $(this).attr('id');
-            $.post('../includes/admin.inc.php', {
+            $.post('../includes/adminajax.inc.php', {
                 id: id
             }, (data) => {
                     if(data){
@@ -229,6 +251,18 @@ include "../includes/admin.inc.php";
                     }
                 });
         });
+        $('.edit').click(function () {
+                const id = $(this).attr('id');
+                $('#editmodal').modal('show');
+
+                $tr = $(this).closest('tr');
+
+                var data = $tr.children("td").map(function () {
+                    return $(this).text();
+                }).get();
+
+                $('#id').val(id);
+                });
     });
 </script>
 </body>
