@@ -49,7 +49,11 @@ class AdminPanel extends Dbh {
 
         move_uploaded_file($tname, $uploads_dir.'/'.$pname);
     
-        $sql = $this->connect()->prepare("INSERT INTO cars (marka,model,description,cena,pojemnosc,paliwo,moc,rocznik,przebieg,filename) VALUES('$marka', '$model', '$description', '$cena', '$pojemnosc', '$paliwo', '$moc', '$rocznik', '$przebieg', '$pname')");
+        $sql = $this->connect()->prepare("INSERT INTO cars (marka,model,description,cena,pojemnosc,paliwo,moc,rocznik,przebieg,filename) VALUES(:marka, :model, :desc, :cena, :pojemnosc, :paliwo, :moc, :rocznik, :przebieg, :file)");
+        $array = array(":marka" => $marka, ":model" => $model,":desc" => $description,":cena" => $cena,":pojemnosc" => $pojemnosc,":paliwo" => $paliwo,":moc" => $moc,":rocznik" => $rocznik,":przebieg" => $przebieg,":file" => $pname);
+        foreach ($array as $key => &$val) {
+            $sql->bindParam($key, $val);
+        }
         $sql->execute();
         
         $conn = null;

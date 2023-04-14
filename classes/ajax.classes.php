@@ -10,7 +10,8 @@ Class Ajax extends Dbh {
                 echo 0;
             } else {
                 $stmt = $this->connect()->prepare("DELETE FROM users WHERE users_id=?");
-                $res = $stmt->execute([$id]);
+                $stmt->bindParam(1, $id);
+                $res = $stmt->execute();
             
                 if($res){
                     echo 1;
@@ -34,8 +35,12 @@ Class Ajax extends Dbh {
         if(empty($id)){
             echo 0;
         } else {
-            $stmt = $this->connect()->prepare("UPDATE users SET users_uid='$user', users_email='$email', users_is_admin='$is_admin' WHERE users_id=?");
-            $res = $stmt->execute([$id]);
+            $stmt = $this->connect()->prepare("UPDATE users SET users_uid=?, users_email=?, users_is_admin=? WHERE users_id=?");
+            $stmt->bindParam(1, $user);
+            $stmt->bindParam(2, $email);
+            $stmt->bindParam(3, $is_admin);
+            $stmt->bindParam(4, $id);
+            $res = $stmt->execute();
         
             if($res){
                 header("Location: ../adminpanel/index.php?mess=successedit");
@@ -49,7 +54,8 @@ Class Ajax extends Dbh {
 
     public function carBuy() {
         $id = $_POST['id'];
-        $stmt = $this->connect()->prepare("SELECT cena FROM cars WHERE id='$id'");
+        $stmt = $this->connect()->prepare("SELECT cena FROM cars WHERE id=?");
+        $stmt->bindParam(1, $id);
         $stmt->execute(); 
         $car = $stmt->fetch();
         $zakup = $car['cena'];
@@ -73,14 +79,16 @@ Class Ajax extends Dbh {
         $fetch = $stmt->fetch();
         $ilosc = $fetch['count'];
         $ilosc++;
-        $stmt = $this->connect()->prepare("UPDATE count SET count='$ilosc'");
+        $stmt = $this->connect()->prepare("UPDATE count SET count=?");
+        $stmt->bindParam(1, $ilosc);
         $stmt->execute();
 
         if(empty($id)){
             echo 0;
         } else {
             $stmt = $this->connect()->prepare("DELETE FROM cars WHERE id=?");
-            $res = $stmt->execute([$id]);
+            $stmt->bindParam(1, $id);
+            $res = $stmt->execute();
 
             if($res != 1){
                 header("Location: index.php?mess=error");

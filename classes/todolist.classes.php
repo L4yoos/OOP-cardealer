@@ -20,7 +20,8 @@ class Todolist extends Dbh {
                 header("Location: ../adminpanel/list.php?mess=error");
             } else {
                 $stmt = $this->connect()->prepare("INSERT INTO todos(title) VALUE(?)");
-                $res = $stmt->execute([$title]);
+                $stmt->bindParam(1, $title);
+                $res = $stmt->execute();
         
                 if($res){
                     header("Location: ../adminpanel/list.php?mess=success");
@@ -44,7 +45,8 @@ class Todolist extends Dbh {
                 echo 'error';
             } else {
                 $todos = $this->connect()->prepare("SELECT id, checked FROM todos WHERE id=?");
-                $todos->execute([$id]);
+                $todos->bindParam(1, $id);
+                $todos->execute();
         
                 $todo = $todos->fetch();
                 $uID = $todo['id'];
@@ -52,7 +54,10 @@ class Todolist extends Dbh {
         
                 $uChecked = $checked ? 0 : 1; 
         
-                $res = $this->connect()->query("UPDATE todos SET checked=$uChecked WHERE id=$uID");
+                $res = $this->connect()->prepare("UPDATE todos SET checked=? WHERE id=?");
+                $res->bindParam(1, $uChecked);
+                $res->bindParam(2, $uID);
+                $res->execute();
                 
                 if($res){
                     echo $checked;
@@ -76,7 +81,8 @@ class Todolist extends Dbh {
                 echo 0;
             } else {
                 $stmt = $this->connect()->prepare("DELETE FROM todos WHERE id=?");
-                $res = $stmt->execute([$id]);
+                $stmt->bindParam(1, $id);
+                $res = $stmt->execute();
         
                 if($res){
                     echo 1;
